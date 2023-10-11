@@ -20,8 +20,15 @@ export const DrawBoard = {
       const rect = this.canvas.getBoundingClientRect();
       let x = event.clientX - rect.left;
       let y = event.clientY - rect.top;
-      this.drawLine(this.lastPoint, { x: x, y: y });
+      
+      this.pushEvent('draw_line', { start: this.lastPoint, end: { x: x, y: y } });
       this.lastPoint = { x: x, y: y };
+    });
+
+
+    window.addEventListener(`phx:new_line`, (e) => {
+      console.log(e)
+      this.drawLine(e.detail.start, e.detail.end);
     });
   },
 

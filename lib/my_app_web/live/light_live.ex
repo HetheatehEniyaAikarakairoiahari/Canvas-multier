@@ -27,6 +27,6 @@ defmodule MyAppWeb.LightLive do
   end
 
   def handle_info({:draw_line, start, ending_point}, socket) do
-    {:noreply, update(socket, :lines, fn lines -> [start: start, end: ending_point] ++ lines end)}
+    {:noreply, push_event(socket, "new_line", %{start: start, end: ending_point})}
   end
 end
