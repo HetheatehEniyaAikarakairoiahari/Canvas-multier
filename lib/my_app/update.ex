@@ -15,6 +15,10 @@ defmodule MyApp.Update do
     {:ok, :up}
   end
 
+  def  broadcast_draw_line(start, ending_point) do
+    Phoenix.PubSub.broadcast(MyApp.PubSub, "event", {:draw_line, start, ending_point})
+  end
+
   def broadcast_down do
     Phoenix.PubSub.broadcast(MyApp.PubSub, "event", {:down})
     {:ok, :down}
