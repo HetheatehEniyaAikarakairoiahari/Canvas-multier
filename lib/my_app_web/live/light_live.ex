@@ -3,7 +3,8 @@ defmodule MyAppWeb.LightLive do
 
   def mount(_params, _session, socket) do
     if connected?(socket), do: MyApp.Update.subscribe()
-
+    a = Process.whereis(:wow)
+    send(a, {:get_state, self()})
     # Assign a random ID to each player's drawing
     socket
     |> assign(:lines, [])
@@ -23,10 +24,31 @@ defmodule MyAppWeb.LightLive do
 
   def handle_event("draw_line", %{"start" => start, "end" => ending_point}, socket) do
     MyApp.Update.broadcast_draw_line(start, ending_point)
+    a = Process.whereis(:wow)
+    send(a,{:new_event, start, ending_point})
     {:noreply, push_event(socket, "new_line", %{start: start, end: ending_point})}
   end
 
   def handle_info({:draw_line, start, ending_point}, socket) do
     {:noreply, push_event(socket, "new_line", %{start: start, end: ending_point})}
+  end
+
+  def handle_info({:get_state, state}, socket) do
+    IO.puts("state #{inspect(state)}")
+    state_replay(state)
+    {:noreply, socket}
+  end
+
+  def state_replay([]) do
+    IO.puts("end of replay")
+  end
+
+  def state_replay([head|tail]) do
+    IO.puts("replaying #{inspect(head)}")
+    state_replay(tail)
+  end
+
+  def state_replay(var) do
+    IO.puts("unhandled: #{inspect(var)}")
   end
 end
