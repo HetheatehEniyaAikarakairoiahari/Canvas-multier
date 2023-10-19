@@ -27,7 +27,7 @@ export const DrawBoard = {
 
 
     window.addEventListener(`phx:new_line`, (e) => {
-      console.log(e)
+      console.log(e);
       this.drawLine(e.detail.start, e.detail.end);
     });
   },

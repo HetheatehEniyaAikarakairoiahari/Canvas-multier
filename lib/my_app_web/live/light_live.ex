@@ -26,6 +26,7 @@ defmodule MyAppWeb.LightLive do
     MyApp.Update.broadcast_draw_line(start, ending_point)
     a = Process.whereis(:wow)
     send(a,{:new_event, start, ending_point})
+    IO.puts("replaying #{inspect(start)}")
     {:noreply, push_event(socket, "new_line", %{start: start, end: ending_point})}
   end
 
@@ -35,20 +36,23 @@ defmodule MyAppWeb.LightLive do
 
   def handle_info({:get_state, state}, socket) do
     IO.puts("state #{inspect(state)}")
-    state_replay(state)
-    {:noreply, socket}
+    #state_replay(state, socket)
+    {:noreply, state_replay(state, socket)}
   end
 
-  def state_replay([]) do
+  def state_replay([], socket) do
     IO.puts("end of replay")
   end
 
-  def state_replay([head|tail]) do
-    IO.puts("replaying #{inspect(head)}")
-    state_replay(tail)
+  def state_replay([head|tail], socket) do
+
+    {start, finish} = head
+    #state_replay(tail, socket)
+    push_event(socket, "new_line", %{start: start, end: finish})
+    #state_replay(tail, socket)
   end
 
-  def state_replay(var) do
+  def state_replay(var, socket) do
     IO.puts("unhandled: #{inspect(var)}")
   end
 end
