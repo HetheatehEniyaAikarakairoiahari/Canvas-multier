@@ -37,11 +37,13 @@ defmodule MyAppWeb.LightLive do
   def handle_info({:get_state, state}, socket) do
     IO.puts("state #{inspect(state)}")
     #state_replay(state, socket)
-    {:noreply, state_replay(state, socket)}
+    state = Enum.map(state, fn {map1, map2} -> [map1, map2] end)
+    {:noreply, push_event(socket, "replay_canvas", %{list: state})}
   end
 
   def state_replay([], socket) do
     IO.puts("end of replay")
+    socket
   end
 
   def state_replay([head|tail], socket) do

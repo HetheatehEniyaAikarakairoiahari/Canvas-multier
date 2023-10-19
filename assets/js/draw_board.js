@@ -27,8 +27,17 @@ export const DrawBoard = {
 
 
     window.addEventListener(`phx:new_line`, (e) => {
-      console.log(e);
+      console.log(e)
       this.drawLine(e.detail.start, e.detail.end);
+    });
+
+    window.addEventListener(`phx:replay_canvas`, (array) => {
+      //console.log(array);
+      for (let e of array.detail.list) {
+        console.log(e);
+        this.drawLine(e[0], e[1]);
+      }
+      //this.drawLine(e.detail.start, e.detail.end);
     });
   },
 
